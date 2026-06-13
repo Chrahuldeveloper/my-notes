@@ -203,44 +203,48 @@ export default function Home() {
     for (const file of files) await uploadImage(file);
   };
 
-  const uploadImage = async (file: File) => {
-    if (!activeCollection) return;
-    setUploadingCount(c => c + 1);
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-    reader.onload = async () => {
-      const fileBase64 = reader.result as string;
-      try {
-        const res = await fetch('/api/upload', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fileBase64 }),
-        });
-        const data = await res.json();
-        if (!data.url) return;
-
-        await updateDoc(doc(db, "users", activeCollection.id), {
-          notesImages: arrayUnion(data.url),
-        });
-
-        setCollections(prev =>
-          prev.map(col =>
-            col.id === activeCollection.id
-              ? { ...col, notesImages: [...col.notesImages, data.url] }
-              : col
-          )
-        );
-        setActiveCollection(prev =>
-          prev ? { ...prev, notesImages: [...prev.notesImages, data.url] } : prev
-        );
-      } finally {
-        setUploadingCount(c => c - 1);
-      }
-    };
-  };
-
 
   const code = process.env.NEXT_PUBLIC_PASS
+
+  const uploadImage = async (file: File) => {
+    if (!activeCollection) return;
+    const pass = prompt("Please enter pass: ")
+    if (pass === code) {
+      setUploadingCount(c => c + 1);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = async () => {
+        const fileBase64 = reader.result as string;
+        try {
+          const res = await fetch('/api/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fileBase64 }),
+          });
+          const data = await res.json();
+          if (!data.url) return;
+
+          await updateDoc(doc(db, "users", activeCollection.id), {
+            notesImages: arrayUnion(data.url),
+          });
+
+          setCollections(prev =>
+            prev.map(col =>
+              col.id === activeCollection.id
+                ? { ...col, notesImages: [...col.notesImages, data.url] }
+                : col
+            )
+          );
+          setActiveCollection(prev =>
+            prev ? { ...prev, notesImages: [...prev.notesImages, data.url] } : prev
+          );
+        } finally {
+          setUploadingCount(c => c - 1);
+        }
+      };
+    }
+  };
+
 
   const handleCreateCollection = async (name: string) => {
     const pass = prompt("Please enter pass: ")
@@ -253,7 +257,7 @@ export default function Home() {
       } catch (e) {
         console.error("Error adding document: ", e);
       }
-    }else{
+    } else {
       alert("wrng password")
     }
   };
@@ -317,10 +321,10 @@ export default function Home() {
               <h1 className="text-4xl sm:text-5xl font-bold tracking-tight text-white mb-3 leading-tight">
                 Capture notes
                 <span className="text-white/30"> visually.
-Keep them organized, instantly.</span>
+                  Keep them organized, instantly.</span>
               </h1>
               <p className="text-white/35 text-sm leading-relaxed">
-              Upload photos of your notes and organize them into collections.
+                Upload photos of your notes and organize them into collections.
                 <br className="hidden sm:block" />
                 a shareable link, and a QR code — no account needed.
               </p>
