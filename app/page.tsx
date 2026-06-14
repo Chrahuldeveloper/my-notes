@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import CollectionModel from "./components/CollectionModel";
+import ImagePreview from "./components/ImagePreview";
 import { db } from '../Firebase'
 import { collection, addDoc, getDocs, updateDoc, arrayUnion, doc } from "firebase/firestore";
 
@@ -189,6 +190,9 @@ export default function Home() {
   const [loadingCollections, setLoadingCollections] = useState(true);
   const [uploadingCount, setUploadingCount] = useState(0);
   const [loadedImages, setLoadedImages] = useState<Record<string, boolean>>({});
+  const [preview, setpreview] = useState<boolean>(false)
+  const [previewUrl, setPreviewUrl] = useState<string>("")
+
 
   const handleDragOver = (e: React.DragEvent) => { e.preventDefault(); setDragging(true); };
   const handleDragLeave = () => setDragging(false);
@@ -245,6 +249,11 @@ export default function Home() {
     }
   };
 
+  const handlPreview = () => {
+    console.log("click")
+    setpreview(true)
+  }
+
 
   const handleCreateCollection = async (name: string) => {
     const pass = prompt("Please enter pass: ")
@@ -293,9 +302,6 @@ export default function Home() {
               <ArrowLeftIcon />
             </button>
           )}
-          <div className="w-7 h-7 rounded-lg bg-white/10 border border-white/10 flex items-center justify-center text-white/60">
-            <CameraIcon />
-          </div>
           <span className="font-semibold text-white text-sm tracking-tight">MyNotes</span>
           {activeCollection && (
             <>
@@ -313,8 +319,13 @@ export default function Home() {
         </button>
       </nav>
 
-      <main className="max-w-3xl mx-auto px-4 pt-12 pb-24">
+      {
+        preview ? <ImagePreview url={previewUrl} onClose={() => {
+          setpreview(false)
+        }} /> : null
+      }
 
+      <main className="max-w-3xl mx-auto px-4 pt-12 pb-24">
         {!activeCollection && (
           <>
             <div className="text-center mb-12">
@@ -406,6 +417,12 @@ export default function Home() {
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {activeCollection.notesImages.map((url, i) => (
                   <div
+                    onClick={() => {
+                      console.log("click")
+                      handlPreview()
+                      setPreviewUrl(url)
+                    }}
+
                     key={i}
                     className="relative aspect-[3/4] rounded-xl overflow-hidden bg-[#161616] border border-white/[0.07] group"
                   >
