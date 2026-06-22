@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { X, Copy, Download, Share2, Image, Folder, Plus, ArrowLeft, Upload } from "lucide-react";
 import CollectionModel from "./components/CollectionModel";
 import ImagePreview from "./components/ImagePreview";
 import { db } from '../Firebase'
@@ -56,7 +57,7 @@ function ShareModal({ onClose }: { onClose: () => void }) {
             <p className="text-white/35 text-xs mt-0.5">Notes · Jun 13, 2026</p>
           </div>
           <button onClick={onClose} className="text-white/30 hover:text-white/70 transition-colors p-1.5 rounded-lg hover:bg-white/5">
-            <XIcon />
+            <X size={14} />
           </button>
         </div>
         <div className="bg-white rounded-xl p-5 mb-4 flex items-center justify-center">
@@ -70,15 +71,15 @@ function ShareModal({ onClose }: { onClose: () => void }) {
         <div className="flex items-center gap-2 bg-[#111] border border-white/[0.08] rounded-xl px-3 py-2.5 mb-4">
           <span className="text-white/35 text-xs truncate flex-1 font-mono">{fakeUrl.slice(0, 42)}…</span>
           <button onClick={handleCopy} className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white transition-colors shrink-0">
-            <CopyIcon />{copied ? "Copied!" : "Copy"}
+            <Copy size={13} />{copied ? "Copied!" : "Copy"}
           </button>
         </div>
         <div className="flex gap-2.5">
           <button className="flex-1 flex items-center justify-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/70 text-xs font-medium rounded-xl py-2.5 transition-colors">
-            <DownloadIcon />Download QR
+            <Download size={13} />Download QR
           </button>
           <button className="flex-1 flex items-center justify-center gap-2 bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-white/70 text-xs font-medium rounded-xl py-2.5 transition-colors">
-            <ShareIcon />Share…
+            <Share2 size={13} />Share…
           </button>
         </div>
       </div>
@@ -95,7 +96,7 @@ function NewFolderModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-white font-semibold text-sm">New folder</h2>
           <button onClick={onClose} className="text-white/30 hover:text-white/70 transition-colors p-1 rounded-lg hover:bg-white/5">
-            <XIcon />
+            <X size={14} />
           </button>
         </div>
         <input
@@ -119,7 +120,6 @@ function NewFolderModal({ onClose, onCreate }: { onClose: () => void; onCreate: 
   );
 }
 
-// ─── Cards ────────────────────────────────────────────────────────────────────
 
 function CollectionCard({ name, thumbnail, onClick }: { name: string; thumbnail?: string; onClick: () => void }) {
   return (
@@ -132,7 +132,7 @@ function CollectionCard({ name, thumbnail, onClick }: { name: string; thumbnail?
           <img src={thumbnail} alt={name} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-white/15 group-hover:text-white/30 transition-colors">
-            <ImageIcon />
+            <Image size={28} />
           </div>
         )}
       </div>
@@ -155,10 +155,9 @@ function FolderCard({ folder, onClick }: { folder: Folder; onClick: () => void }
           <img src={thumb} alt={folder.name} className="w-full h-full object-cover opacity-70 group-hover:opacity-90 transition-opacity" />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-white/15 group-hover:text-white/30 transition-colors">
-            <FolderIcon />
+            <Folder size={28} />
           </div>
         )}
-        {/* folder count badge */}
         {folder.images.length > 0 && (
           <span className="absolute top-2 right-2 bg-black/60 text-white/70 text-[10px] font-medium px-1.5 py-0.5 rounded-full backdrop-blur-sm">
             {folder.images.length}
@@ -166,7 +165,7 @@ function FolderCard({ folder, onClick }: { folder: Folder; onClick: () => void }
         )}
       </div>
       <div className="px-3 py-2.5 border-t border-white/[0.06] text-left bg-[#161616] flex items-center gap-1.5">
-        <span className="text-white/30"><FolderIcon filled={false} /></span>
+        <span className="text-white/30"><Folder size={14} /></span>
         <p className="text-white/60 text-xs font-medium truncate">{folder.name}</p>
       </div>
     </button>
@@ -234,10 +233,8 @@ export default function Home() {
         const data = await res.json();
         if (!data.url) return;
 
-        // Pull the current doc, update the matching folder's images array
         const colRef = doc(db, "users", activeCollection.id);
 
-        // Build the updated folders array locally
         const updatedFolders = activeCollection.folders.map(f =>
           f.id === activeFolder.id
             ? { ...f, images: [...f.images, data.url] }
@@ -325,7 +322,7 @@ export default function Home() {
         <div className="flex items-center gap-2.5">
           {level > 0 && (
             <button onClick={goBack} className="mr-1 text-white/30 hover:text-white/70 transition-colors p-1">
-              <ArrowLeftIcon />
+              <ArrowLeft size={16} />
             </button>
           )}
           <span className="font-semibold text-white text-sm tracking-tight">MyNotes</span>
@@ -354,7 +351,7 @@ export default function Home() {
               onClick={() => setShowNewFolder(true)}
               className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white border border-white/10 hover:border-white/25 rounded-xl px-3.5 py-2 transition-all hover:bg-white/5"
             >
-              <PlusIcon />
+              <Plus size={13} />
               New folder
             </button>
           )}
@@ -362,7 +359,7 @@ export default function Home() {
             onClick={() => settoggleCollection(true)}
             className="flex items-center gap-1.5 text-xs text-white/50 hover:text-white border border-white/10 hover:border-white/25 rounded-xl px-3.5 py-2 transition-all hover:bg-white/5"
           >
-            <PlusIcon />
+            <Plus size={13} />
             New collection
           </button>
         </div>
@@ -400,7 +397,6 @@ export default function Home() {
                 {loadingCollections && [0, 1, 2].map(i => <SkeletonCard key={i} />)}
 
                 {!loadingCollections && collections.map(col => {
-                  // use first image of first folder as thumbnail
                   const thumb = col.folders[0]?.images[0] ?? col.notesImages[0];
                   return (
                     <CollectionCard key={col.id} name={col.name} thumbnail={thumb} onClick={() => setActiveCollection(col)} />
@@ -409,7 +405,7 @@ export default function Home() {
 
                 {!loadingCollections && collections.length === 0 && (
                   <div className="w-full py-16 flex flex-col items-center justify-center border-2 border-dashed border-white/[0.06] rounded-2xl">
-                    <div className="text-white/15 mb-3"><ImageIcon /></div>
+                    <div className="text-white/15 mb-3"><Image size={28} /></div>
                     <p className="text-white/25 text-xs">No collections yet</p>
                     <button
                       onClick={() => settoggleCollection(true)}
@@ -429,7 +425,7 @@ export default function Home() {
             <div className="flex flex-wrap gap-4">
               {activeCollection.folders.length === 0 && (
                 <div className="w-full py-16 flex flex-col items-center justify-center border-2 border-dashed border-white/[0.06] rounded-2xl">
-                  <div className="text-white/15 mb-3"><FolderIcon /></div>
+                  <div className="text-white/15 mb-3"><Folder size={28} /></div>
                   <p className="text-white/25 text-xs">No folders yet</p>
                   <button
                     onClick={() => setShowNewFolder(true)}
@@ -453,7 +449,6 @@ export default function Home() {
 
         {level === 2 && activeFolder && (
           <div>
-            {/* Upload zone */}
             <label
               onDragOver={handleDragOver}
               onDragLeave={handleDragLeave}
@@ -473,7 +468,7 @@ export default function Home() {
                 onChange={handleFileChange}
               />
               <div className={`transition-colors ${dragging ? "text-white/50" : "text-white/20"}`}>
-                {uploadingCount > 0 ? <Spinner size={28} className="text-white/30" /> : <UploadIcon />}
+                {uploadingCount > 0 ? <Spinner size={28} className="text-white/30" /> : <Upload size={28} />}
               </div>
               <div className="text-center">
                 <p className="text-white/50 font-medium text-xs">
@@ -483,7 +478,6 @@ export default function Home() {
               </div>
             </label>
 
-            {/* Images grid */}
             {activeFolder.images.length > 0 ? (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                 {activeFolder.images.map((url, i) => (
@@ -494,7 +488,7 @@ export default function Home() {
                   >
                     {!loadedImages[url] && (
                       <div className="absolute inset-0 bg-[#161616] animate-pulse flex items-center justify-center">
-                        <div className="text-white/10"><ImageIcon /></div>
+                        <div className="text-white/10"><Image size={28} /></div>
                       </div>
                     )}
                     <img
